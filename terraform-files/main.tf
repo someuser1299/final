@@ -7,9 +7,22 @@ resource "aws_key_pair" "liad_ssh_key_id" {
   public_key = file(var.ssh_key_path)
 }
 
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "main_subnet" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+
+}
+
+
+
 resource "aws_security_group" "liad_security_group_id" {
   name        = var.security_group_name
-
+  vpc_id      = aws_vpc.main.id
   ingress {
     from_port   = 22
     to_port     = 22

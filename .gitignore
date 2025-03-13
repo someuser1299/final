@@ -6,3 +6,5 @@ awscliv2.zip
 # terraform
 .terraform*
 terraform*
+
+!terraform-files

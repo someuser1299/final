@@ -42,7 +42,7 @@ resource "aws_instance" "builder" {
   ami             = var.ami 
   instance_type   = var.instance_type
   key_name        = aws_key_pair.liad_ssh_key_id.key_name
-  security_groups = [aws_security_group.liad_security_group_id.name]
+  vpc_security_group_ids   = [aws_security_group.liad_security_group_id.id]
   subnet_id       = aws_subnet.main_subnet.id
 
   tags = {

@@ -43,6 +43,7 @@ resource "aws_instance" "builder" {
   instance_type   = var.instance_type
   key_name        = aws_key_pair.liad_ssh_key_id.key_name
   security_groups = [aws_security_group.liad_security_group_id.name]
+  subnet_id       = aws_subnet.main_subnet.id
 
   tags = {
     Name = "builder"

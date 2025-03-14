@@ -27,3 +27,18 @@ variable "az" {
     default = "us-east-1a"
 }
 
+variable "main_vpc_name" {
+    default = "liad_main_vpc_name"
+}
+
+variable "main_igw_name" {
+    default = "liad_main_igw_name"
+}
+
+variable "main_subnet_name" {
+    default = "liad_main_subnet_name"
+}
+
+variable "main_rt_name" {
+    default = "liad_main_rt_name"
+}

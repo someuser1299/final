@@ -54,7 +54,7 @@ resource "aws_route_table" "liad_main_rt_id" {
 }
 
 # Route Table Association
-resource "aws_route_table_association" "main" {
+resource "aws_route_table_association" "liad_rt_association_id" {
   subnet_id      = aws_subnet.liad_main_subnet_id.id
   route_table_id = aws_route_table.liad_main_rt_id.id
 }
@@ -99,13 +99,56 @@ resource "aws_security_group" "liad_security_group_id" {
 
 # EC2 Instance
 resource "aws_instance" "builder" {
-  ami             = var.ami 
-  instance_type   = var.instance_type
-  key_name        = aws_key_pair.liad_ssh_key_id.key_name
+  ami                    = var.ami 
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.liad_ssh_key_id.key_name
   vpc_security_group_ids = [aws_security_group.liad_security_group_id.id]
-  subnet_id       = aws_subnet.liad_main_subnet_id.id
+  subnet_id              = aws_subnet.liad_main_subnet_id.id
 
   tags = {
     Name = "builder"
+  }
+}
+
+# A null_resource that depends on the EC2 instance and handles Docker installation
+resource "null_resource" "install_docker" {
+  # This ensures the null_resource is created after the EC2 instance
+  depends_on = [aws_instance.builder]
+
+  # This ensures the null_resource is recreated if the instance is recreated
+  triggers = {
+    instance_id = aws_instance.builder.id
+  }
+
+  # Copy the installation script
+  provisioner "file" {
+    source      = "${path.module}/install_docker.sh"
+    destination = "/tmp/install_docker.sh"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/liad_ssh_key")
+      host        = aws_instance.builder.public_ip
+      timeout     = "5m"
+      agent       = false
+    }
+  }
+
+  # Execute the installation script
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /tmp/install_docker.sh",
+      "/tmp/install_docker.sh"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/liad_ssh_key")
+      host        = aws_instance.builder.public_ip
+      timeout     = "5m"
+      agent       = false
+    }
   }
 }

@@ -26,6 +26,17 @@ The application requires AWS credentials to access your AWS resources. These are
 - `AWS_SECRET_ACCESS_KEY`: Your AWS Secret Access Key
 - `AWS_REGION`: AWS Region (defaults to us-east-1)
 
+
+## SSH into the EC2 instance & Clone the repository on the EC2 instance
+
+```bash
+ssh -i ~/.ssh/liad_ssh_key ubuntu@
+git clone https://github.com/USER/final-test.git
+cd final-test
+git checkout section3-docker
+cd docker-files
+```
+
 ## Building and Running Locally
 
 1. Build the Docker image (here "aws-dashborad" is the iamge name):
@@ -35,58 +46,14 @@ The application requires AWS credentials to access your AWS resources. These are
 
 2. Run the container (insert your access kry and secret key):
    ```bash
-   docker run -p 5001:5001 \
+   docker run -itd -p 5001:5001 \
      -e AWS_ACCESS_KEY_ID=your_access_key_id \
      -e AWS_SECRET_ACCESS_KEY=your_secret_access_key \
      -e AWS_REGION=us-east-1 \
      aws-dashboard
    ```
 
-## Optional: Using Docker Compose
-
-1. Create a `.env` file with your AWS credentials:
-   ```
-   AWS_ACCESS_KEY_ID=your_access_key_id
-   AWS_SECRET_ACCESS_KEY=your_secret_access_key
-   AWS_REGION=us-east-1
-   ```
-
-2. Run with Docker Compose:
-   ```bash
-   docker-compose up -d
-   ```
-
-## SSH into the EC2 instance & Clone the repository on the EC2 instance
-
-```bash
-ssh -i ~/.ssh/liad_ssh_key ubuntu@
-git clone https://github.com/someuser1299/final.git
-cd final
-git checkout section3-docker
-cd docker-files
-```
-
-Create a `.env` file with your AWS credentials:
-
-```bash
-cat > .env << EOL
-AWS_ACCESS_KEY_ID="your_access_key_id"
-AWS_SECRET_ACCESS_KEY="your_secret_access_key_id"
-AWS_REGION="us-east-1"
-EOL
-```
-
-## Build and run the Docker container
-
-```bash
-docker build -t aws-dashboard .
-docker run -d -p 5001:5001 \
-  --env-file .env \
-  --name aws-dashboard \
-  aws-dashboard
-```
-
 
 ## Accessing the Dashboard
 
-Once running, access the dashboard at: http://localhost:5001
+when the container is running, access the dashboard at: http://localhost:5001
